@@ -3,8 +3,24 @@ const app = express();
 const pool = require("./db");
 const cors = require("cors");
 
+///
+const http = require("http");
+const path = require("path");
+
+const server = http.createServer(app);
+const Server = require("socket.io").Server;
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+const _dirname = path.dirname("");
+const buildPath = path.join(_dirname, "../client/build");
+
 // middleware
-app.use(cors());
+// app.use(cors());
+app.use(express.static(buildPath));
 app.use(express.json());
 // app.get("/geom", async (requ, res) => {
 //   try {
@@ -42,17 +58,48 @@ app.use(express.json());
 //   }
 // });
 
-app.get("/geom", async (requ, res) => {
-  try {
-    const geom5 = await pool.query("SELECT * FROM test");
-    const geom6 = await pool.query("SELECT * FROM scenario");
+// app.get("/geom", async (requ, res) => {
+//   try {
+//     const geom5 = await pool.query("SELECT * FROM test");
+//     const geom6 = await pool.query("SELECT * FROM scenario");
 
-    res.json([geom5.rows, geom6.rows]);
-  } catch (err) {
-    console.error(err.message);
-  }
+//     res.json([geom5.rows, geom6.rows]);
+//   } catch (err) {
+//     console.error(err.message);
+//   }
+// });
+
+app.get("/*", async function (req, res) {
+  const geom5 = await pool.query("SELECT * FROM test");
+  const geom6 = await pool.query("SELECT * FROM scenario");
+
+  res.json([geom5.rows, geom6.rows]);
+
+  //
+  res.sendFile(
+    path.join(__dirname, "../client/build/index.html"),
+    function (err) {
+      if (err) {
+        res.status(500).send(err);
+      }
+    }
+  );
 });
 
-app.listen(5000, () => {
-  console.log("server is running on port 5000");
+io.on("connection", (socket) => {
+  console.log("We are connected");
+
+  socket.on("chat", (chat) => {
+    io.emit("chat", chat);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("disconnected");
+  });
 });
+
+server.listen(5001, () => console.log("Listening to port 5001"));
+
+// app.listen(5000, () => {
+//   console.log("server is running on port 5000");
+// });
