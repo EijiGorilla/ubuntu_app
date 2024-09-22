@@ -7,20 +7,20 @@ const cors = require("cors");
 const http = require("http");
 const path = require("path");
 
-const server = http.createServer(app);
-const Server = require("socket.io").Server;
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
+// const server = http.createServer(app);
+// const Server = require("socket.io").Server;
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*",
+//   },
+// });
 
-const _dirname = path.dirname("");
-const buildPath = path.join(_dirname, "../client/build");
+// const _dirname = path.dirname("");
+// const buildPath = path.join(_dirname, "../client/build");
 
 // middleware
-// app.use(cors());
-app.use(express.static(buildPath));
+app.use(cors());
+// app.use(express.static(buildPath));
 app.use(express.json());
 // app.get("/geom", async (requ, res) => {
 //   try {
@@ -76,30 +76,31 @@ app.get("/*", async function (req, res) {
   res.json([geom5.rows, geom6.rows]);
 
   //
-  res.sendFile(
-    path.join(__dirname, "../client/build/index.html"),
-    function (err) {
-      if (err) {
-        res.status(500).send(err);
-      }
-    }
-  );
+  // res.sendFile(
+  //   path.join(__dirname, "../client/build/index.html"),
+  //   function (err) {
+  //     if (err) {
+  //       res.status(500).send(err);
+  //     }
+  //   }
+  // );
 });
 
-io.on("connection", (socket) => {
-  console.log("We are connected");
+// io.on("connection", (socket) => {
+//   console.log("We are connected");
 
-  socket.on("chat", (chat) => {
-    io.emit("chat", chat);
-  });
+//   socket.on("chat", (chat) => {
+//     io.emit("chat", chat);
+//   });
 
-  socket.on("disconnect", () => {
-    console.log("disconnected");
-  });
-});
-
-server.listen(5001, () => console.log("Listening to port 5001"));
-
-// app.listen(5000, () => {
-//   console.log("server is running on port 5000");
+//   socket.on("disconnect", () => {
+//     console.log("disconnected");
+//   });
 // });
+
+// server.listen(5001, () => console.log("Listening to port 5001"));
+// server.listen(5000, () => console.log("Listening to port 5000"));
+
+app.listen(5000, () => {
+  console.log("server is running on port 5000");
+});
