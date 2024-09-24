@@ -1,21 +1,32 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, LayersControl, GeoJSON } from 'react-leaflet';
-
+import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
+import TestFinder from '../apis/TestFinder';
 
 const MyData = () => {
   const [data, setData] = useState();
 
   const getData = async () => {
-    const response = await fetch('http://localhost:5000/geom');
-    const jsonData = await response.json();
-    setData(jsonData[0]);
+    // 1. Use fetch
+    // const response = await fetch('http://localhost:5000/geom');
+    // const jsonData = await response.json();
+
+    // 2. Use axios directly
+    // const jsonData = await axios.get('http://localhost:5000/geom');
+    // console.log(jsonData.data[0]);
+    // setData(jsonData.data[0]);
+
+    // 3. Use axios from conditional states. we need this in aws ec2
+    const response = await TestFinder.get('/');
+    console.log(response.data[0]);
+    setData(response.data[0]);
   };
 
   useEffect(() => {
     getData();
   }, []);
-  console.log(data);
+  // console.log(data);
 
   if (data) {
     return <GeoJSON data={data} />;
