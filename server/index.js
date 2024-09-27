@@ -102,7 +102,7 @@ app.get("/*", async function (req, res) {
 // server.listen(5001, () => console.log("Listening to port 5001"));
 // server.listen(5000, () => console.log("Listening to port 5000"));
 // 'dotenv' loads environment variables from a .env file into process.env.
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000 || 5001 || 3000;
 app.listen(port, () => {
-  console.log("server is running on port 5000");
+  console.log(`server is running on port ${port}`);
 });
